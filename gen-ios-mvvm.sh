@@ -49,7 +49,7 @@ echo """\
 import Foundation
 
 protocol $coordinatorProtocolName {
-  static func createModule() -> UIViewController & $viewProtocolName
+  static func createModule() -> $viewProtocolName
 }
 
 protocol $viewProtocolName {
@@ -57,6 +57,7 @@ protocol $viewProtocolName {
 }
 
 protocol $viewModelProtocolName {
+  var coordinator: $coordinatorProtocolName? { get set } 
   func viewDidLoad()
 }""" > $protocolsName.swift;
 
@@ -74,11 +75,13 @@ import Foundation
 import UIKit
 
 class $coordinatorName: NSObject, $coordinatorProtocolName {
-  static func createModule() -> UIViewController & $viewProtocolName {
+  static func createModule() -> $viewProtocolName {
     let view = $viewName()
     let viewModel = $viewModelName()
+    let coordinator = $coordinatorName()
 
     view.viewModel = viewModel
+    viewModel.coordinator = coordinator
 
     return view
   }
@@ -112,7 +115,6 @@ class $viewName: UIViewController, $viewProtocolName {
     // Do any additional setup after loading the view.
 
     DispatchQueue.main.async { [weak self] in
-      self?.setupBind()
       self?.viewModel?.viewDidLoad()
     }
   }
@@ -133,7 +135,8 @@ echo """\
 
 import Foundation
 
-class $viewModelName: NSObject, $viewModelProtocolName {  
+class $viewModelName: NSObject, $viewModelProtocolName {
+  var coordinator: $coordinatorProtocolName?
   func viewDidLoad() {
   }
 }""" > $viewModelName.swift;

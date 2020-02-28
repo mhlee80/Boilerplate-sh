@@ -49,10 +49,9 @@ echo """\
 //
 
 import Foundation
-import UIKit
 
 protocol $wireframeProtocolName: class {
-  static func createModule() -> UIViewController & $viewProtocolName 
+  static func createModule() -> $viewProtocolName 
 }
 
 protocol $viewProtocolName: class {
@@ -81,10 +80,9 @@ echo """\
 //
 
 import Foundation
-import UIKit
 
 class $wireframeName: NSObject, $wireframeProtocolName {
-  static func createModule() -> UIViewController & $viewProtocolName {
+  static func createModule() -> $viewProtocolName {
     let view = $viewName()
     let presenter = $presenterName()
     let interactor = $interactorName()

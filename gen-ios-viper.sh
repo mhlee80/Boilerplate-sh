@@ -49,13 +49,15 @@ echo """\
 //
 
 import Foundation
+import RxSwift
 
 protocol $wireframeProtocolName: class {
   static func createModule() -> $viewProtocolName 
 }
 
 protocol $viewProtocolName: class {
-  var presenter: $presenterProtocolName? { get set }
+  var presenter: Any? { get set }
+  var onViewDidLoad: PublishSubject<Void> { get }
 }
 
 protocol $presenterProtocolName: class {
@@ -109,24 +111,19 @@ echo """\
 
 import Foundation
 import UIKit
+import RxSwift
 
 class $viewName: UIViewController, $viewProtocolName {  
-  var presenter: $presenterProtocolName? {
-    didSet {
-      setupBind()
-    }
-  }
-    
+  var presenter: Any? 
+  var onViewDidLoad = PublishSubject<Void>()
+
   override func viewDidLoad() {
     super.viewDidLoad()
     // Do any additional setup after loading the view.
         
     DispatchQueue.main.async { [weak self] in
-      self?.presenter?.viewDidLoad()
+      self?.onViewDidLoad.onNext(())
     }
-  }
-  
-  private func setupBind() {
   }
 }""" > $viewName.swift;
 

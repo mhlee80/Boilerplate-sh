@@ -253,6 +253,26 @@ export SLS_API_GROUP=$apiGroup
 export SLS_API_VERSION=$apiVersion
 export SLS_BASE_PATH=$basePath
 
+sls offline --stage \$SLS_STAGE
+""" > sls-offline-dev-$apiGroup-$apiVersion-$basePath.sh
+
+echo """\
+export SLS_SERVICE_NAME=$serviceName
+export SLS_STAGE=prd
+export SLS_API_GROUP=$apiGroup
+export SLS_API_VERSION=$apiVersion
+export SLS_BASE_PATH=$basePath
+
+sls offline --stage \$SLS_STAGE
+""" > sls-offline-prd-$apiGroup-$apiVersion-$basePath.sh
+
+echo """\
+export SLS_SERVICE_NAME=$serviceName
+export SLS_STAGE=dev
+export SLS_API_GROUP=$apiGroup
+export SLS_API_VERSION=$apiVersion
+export SLS_BASE_PATH=$basePath
+
 sls create_domain --stage \$SLS_STAGE
 sls deploy --stage \$SLS_STAGE
 """ > sls-deploy-dev-$apiGroup-$apiVersion-$basePath.sh

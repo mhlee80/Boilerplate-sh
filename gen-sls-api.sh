@@ -47,20 +47,6 @@ get:
         integration: lambda-proxy
         cors: true
 
-delete:
-  name: \${self:custom.apiName}-delete
-  handler: src/functions/api-handlers/\${self:custom.apiGrou}-\${self:custom.apiVersion}/\${self:custom.basePath}/delete.handler
-  events:
-    - http:
-        path: /{id}
-        method: delete
-        request:
-          parameters:
-            paths:
-              id: true
-        integration: lambda-proxy
-        cors: true
-
 list:
   name: \${self:custom.apiName}-list
   handler: src/functions/api-handlers/\${self:custom.apiGroup}-\${self:custom.apiVersion}/\${self:custom.basePath}/list.handler
@@ -72,6 +58,20 @@ list:
           parameters:
             querystrings:
               url: true
+        integration: lambda-proxy
+        cors: true
+
+delete:
+  name: \${self:custom.apiName}-delete
+  handler: src/functions/api-handlers/\${self:custom.apiGrou}-\${self:custom.apiVersion}/\${self:custom.basePath}/delete.handler
+  events:
+    - http:
+        path: /{id}
+        method: delete
+        request:
+          parameters:
+            paths:
+              id: true
         integration: lambda-proxy
         cors: true
 """ > $functionsFilename
@@ -121,6 +121,24 @@ echo """\
 'use strict';
 
 module.exports.handler = async event => {
+  return {
+    statusCode: 200,
+    body: JSON.stringify(
+      {
+        message: \`LIST\`,
+        input: event,
+      },
+      null,
+      2
+    ),
+  };
+};
+""" > src/functions/api-handlers/$apiGroup-$apiVersion/$basePath/list.js
+
+echo """\
+'use strict';
+
+module.exports.handler = async event => {
   const id = event.pathParameters.id
 
   return {
@@ -137,20 +155,84 @@ module.exports.handler = async event => {
 };
 """ > src/functions/api-handlers/$apiGroup-$apiVersion/$basePath/delete.js
 
-echo """\
-'use strict';
+mkdir -p test-scripts/functions
 
-module.exports.handler = async event => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify(
-      {
-        message: \`LIST\`,
-        input: event,
-      },
-      null,
-      2
-    ),
-  };
-};
-""" > src/functions/api-handlers/$apiGroup-$apiVersion/$basePath/list.js
+echo """\
+'use strict'
+
+const assert = require('assert')
+const { describe, it, before, after } = require('mocha')
+const chakram = require('chakram')
+const expect = chakram.expect
+
+const stage = process.env.STAGE === 'prd' ? 'prd' : 'dev'
+const infraConfig = require('../../config/infra-cfg.json')[stage]
+
+const host = process.env.SLS_HOST
+
+describe('$apiGroup-$apiVersion/$basePath', function () {
+  this.timeout(0)
+
+  before('setup', async function () {
+  })
+
+  after('tear down', async function () {
+  })
+
+  it('post $apiGroup-$apiVersion/$basePath/', function () {
+    const url = host + '/'
+    var response = chakram.get(url)
+
+    expect(response).to.have.status(201)
+
+    // response.then(function (res) {
+    //   console.log(JSON.stringify(res.response.body))
+    //   return res
+    // })
+
+    return chakram.wait()
+  })
+
+  it('get $apiGroup-$apiVersion/$basePath/{id}', function () {
+    const url = host + '/' + 'id'
+    var response = chakram.get(url)
+
+    expect(response).to.have.status(200)
+
+    // response.then(function (res) {
+    //   console.log(JSON.stringify(res.response.body))
+    //   return res
+    // })
+
+    return chakram.wait()
+  })
+
+  it('list $apiGroup-$apiVersion/$basePath', function () {
+    const url = host + '/'
+    var response = chakram.get(url)
+
+    expect(response).to.have.status(200)
+
+    // response.then(function (res) {
+    //   console.log(JSON.stringify(res.response.body))
+    //   return res
+    // })
+
+    return chakram.wait()
+  })
+
+  it('delete $apiGroup-$apiVersion/$basePath/{id}', function () {
+    const url = host + '/' + 'id'
+    var response = chakram.get(url)
+
+    expect(response).to.have.status(204)
+
+    // response.then(function (res) {
+    //   console.log(JSON.stringify(res.response.body))
+    //   return res
+    // })
+
+    return chakram.wait()
+  })
+})
+""" > test-scripts/functions/$apiGroup-$apiVersion-$basePath.js

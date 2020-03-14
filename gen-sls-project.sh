@@ -27,10 +27,10 @@ custom:
   stage: \${opt:stage, 'dev'} # dev or prd
   apiGroup: \${env:SLS_API_GROUP}
   apiVersion: \${env:SLS_API_VERSION}
-  apiGroupId: \${env:SLS_API_GROUP_ID}
+  # apiGroupId: \${env:SLS_API_GROUP_ID}
   basePath: \${env:SLS_BASE_PATH}
-  domainName: \${self:custom.apiGroupId}.\${self:custom.stage}.\${self:custom.serviceName}.wiwa.io
-  apiName: \${self:custom.serviceName}-\${self:custom.stage}-\${self:custom.apiGroupId}-\${self:custom.basePath}
+  domainName: \${self:custom.apiGroup}-\${self:custom.apiVersion}.\${self:custom.stage}.\${self:custom.serviceName}.wiwa.io
+  apiName: \${self:custom.serviceName}-\${self:custom.stage}-\${self:custom.apiGroup}-\${self:custom.apiVersion}-\${self:custom.basePath}
   endpointType: REGIONAL
   
   memorySize: 128
@@ -39,7 +39,7 @@ custom:
   _cfg: \${file(config/infra-cfg.json)}
   cfg: \${self:custom._cfg.\${self:custom.stage}}
 
-  functionsFilename: serverless-\${self:custom.apiGroupId}-\${self:custom.basePath}.yaml
+  functionsFilename: serverless-\${self:custom.apiGroup}-\${self:custom.apiVersion}-\${self:custom.basePath}.yaml
 
   aws:
     vpc:
@@ -87,4 +87,4 @@ plugins:
 package:
   exclude:
     - README/**
-""" > serverless.yml
+""" > serverless.yaml

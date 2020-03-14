@@ -78,3 +78,79 @@ list:
 
 mkdir -p src/functions/api-handlers/$apiGroup-$apiVersion/$basePath
 
+echo """\
+'use strict';
+
+module.exports.handler = async event => {
+  return {
+    statusCode: 201,
+    body: JSON.stringify(
+      {
+        message: \`POST\`,
+        input: event,
+      },
+      null,
+      2
+    ),
+  };
+};
+""" > src/functions/api-handlers/$apiGroup-$apiVersion/$basePath/post.js
+
+
+echo """\
+'use strict';
+
+module.exports.handler = async event => {
+  const id = event.pathParameters.id
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify(
+      {
+        message: \`GET: id = \${id}\`,
+        input: event,
+      },
+      null,
+      2
+    ),
+  };
+};
+""" > src/functions/api-handlers/$apiGroup-$apiVersion/$basePath/get.js
+
+echo """\
+'use strict';
+
+module.exports.handler = async event => {
+  const id = event.pathParameters.id
+
+  return {
+    statusCode: 204,
+    body: JSON.stringify(
+      {
+        message: \`DELETE: id = \${id}. But 204 does not require body.\`,
+        input: event,
+      },
+      null,
+      2
+    ),
+  };
+};
+""" > src/functions/api-handlers/$apiGroup-$apiVersion/$basePath/delete.js
+
+echo """\
+'use strict';
+
+module.exports.handler = async event => {
+  return {
+    statusCode: 200,
+    body: JSON.stringify(
+      {
+        message: \`LIST\`,
+        input: event,
+      },
+      null,
+      2
+    ),
+  };
+};
+""" > src/functions/api-handlers/$apiGroup-$apiVersion/$basePath/list.js

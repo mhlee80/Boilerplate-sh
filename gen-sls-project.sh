@@ -88,3 +88,38 @@ package:
   exclude:
     - README/**
 """ > serverless.yaml
+
+
+mkdir config
+
+echo """\
+{
+  \"dev\": {
+    \"aws\": {
+      \"vpc\": {
+        \"region\": \"ap-northeast-2\",
+        \"securityGroupId\": \"sg-\",
+        \"privateSubnetId1\": \"subnet-\",
+        \"privateSubnetId2\": \"subnet-\"
+      },
+      \"iam\": {
+        \"functionRoleARN\": \"arn:aws:iam::\"
+      }
+    }
+  },
+
+  \"prd\": {
+    \"aws\": {
+      \"vpc\": {
+        \"region\": \"ap-northeast-2\",
+        \"securityGroupId\": \"sg-\",
+        \"privateSubnetId1\": \"subnet-\",
+        \"privateSubnetId2\": \"subnet-\"
+      },
+      \"iam\": {
+        \"functionRoleARN\": \"arn:aws:iam::\"
+      }
+    }
+  }
+}
+""" > config/infra-cfg.json

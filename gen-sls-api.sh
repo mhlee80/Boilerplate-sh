@@ -288,3 +288,24 @@ sls create_domain --stage \$SLS_STAGE
 sls deploy --stage \$SLS_STAGE
 """ > sls-deploy-prd-$apiGroup-$apiVersion-$basePath.sh
 
+echo """\
+export SLS_SERVICE_NAME=$serviceName
+export SLS_STAGE=dev
+export SLS_API_GROUP=$apiGroup
+export SLS_API_VERSION=$apiVersion
+export SLS_BASE_PATH=$basePath
+
+sls delete_domain
+sls remove --stage \$SLS_STAGE
+""" > sls-remove-dev-$apiGroup-$apiVersion-$basePath.sh
+
+echo """\
+export SLS_SERVICE_NAME=$serviceName
+export SLS_STAGE=prd
+export SLS_API_GROUP=$apiGroup
+export SLS_API_VERSION=$apiVersion
+export SLS_BASE_PATH=$basePath
+
+sls delete_domain
+sls remove --stage \$SLS_STAGE
+""" > sls-remove-prd-$apiGroup-$apiVersion-$basePath.sh

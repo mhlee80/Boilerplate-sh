@@ -27,7 +27,6 @@ custom:
   stage: \${opt:stage, 'dev'} # dev or prd
   apiGroup: \${env:SLS_API_GROUP}
   apiVersion: \${env:SLS_API_VERSION}
-  # apiGroupId: \${env:SLS_API_GROUP_ID}
   basePath: \${env:SLS_BASE_PATH}
   domainName: \${self:custom.apiGroup}-\${self:custom.apiVersion}.\${self:custom.stage}.\${self:custom.serviceName}.wiwa.io
   apiName: \${self:custom.serviceName}-\${self:custom.stage}-\${self:custom.apiGroup}-\${self:custom.apiVersion}-\${self:custom.basePath}

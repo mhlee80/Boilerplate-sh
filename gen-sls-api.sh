@@ -1,16 +1,25 @@
-usage="usage: $0 <apiGroup> <apiVersion> <basePath>";
+usage="usage: $0 <serviceName> <apiGroup> <apiVersion> <basePath>";
 
 if [ $1 ] ; then 
-  apiGroup=$1;
+  serviceName=$1;
 fi
 
 if [ $2 ] ; then 
-  apiVersion=$2;
+  apiGroup=$2;
 fi
 
 if [ $3 ] ; then 
-  basePath=$3;
+  apiVersion=$3;
 fi
+
+if [ $4 ] ; then 
+  basePath=$4;
+fi
+
+if [ -z $serviceName ] ; then
+  echo $usage; exit 1;
+fi
+
 
 if [ -z $apiGroup ] ; then
   echo $usage; exit 1;
@@ -63,7 +72,7 @@ list:
 
 delete:
   name: \${self:custom.apiName}-delete
-  handler: src/functions/api-handlers/\${self:custom.apiGrou}-\${self:custom.apiVersion}/\${self:custom.basePath}/delete.handler
+  handler: src/functions/api-handlers/\${self:custom.apiGroup}-\${self:custom.apiVersion}/\${self:custom.basePath}/delete.handler
   events:
     - http:
         path: /{id}
@@ -236,3 +245,26 @@ describe('$apiGroup-$apiVersion/$basePath', function () {
   })
 })
 """ > test-scripts/functions/$apiGroup-$apiVersion-$basePath.js
+
+echo """\
+export SLS_SERVICE_NAME=$serviceName
+export SLS_STAGE=dev
+export SLS_API_GROUP=$apiGroup
+export SLS_API_VERSION=$apiVersion
+export SLS_BASE_PATH=$basePath
+
+sls create_domain --stage \$SLS_STAGE
+sls deploy --stage \$SLS_STAGE
+""" > sls-deploy-dev-$apiGroup-$apiVersion-$basePath.sh
+
+echo """\
+export SLS_SERVICE_NAME=$serviceName
+export SLS_STAGE=prd
+export SLS_API_GROUP=$apiGroup
+export SLS_API_VERSION=$apiVersion
+export SLS_BASE_PATH=$basePath
+
+sls create_domain --stage \$SLS_STAGE
+sls deploy --stage \$SLS_STAGE
+""" > sls-deploy-prd-$apiGroup-$apiVersion-$basePath.sh
+

@@ -331,3 +331,25 @@ export SLS_BASE_PATH=$basePath
 export SLS_HOST="http://localhost:3000"
 mocha test-scripts/functions/$apiGroup-$apiVersion-$basePath.js
 """ > test-offline-prd-$apiGroup-$apiVersion-$basePath.sh
+
+echo """\
+export SLS_SERVICE_NAME=$serviceName
+export SLS_STAGE=dev
+export SLS_API_GROUP=$apiGroup
+export SLS_API_VERSION=$apiVersion
+export SLS_BASE_PATH=$basePath
+
+export SLS_HOST=\"https://$apiGroup$-$apiVersion.dev.$serviceName.wiwa.io/$basePath\"
+mocha test-scripts/functions/$apiGroup-$apiVersion-$basePath.js
+""" > test-deploy-dev-$apiGroup-$apiVersion-$basePath.sh
+
+echo """\
+export SLS_SERVICE_NAME=$serviceName
+export SLS_STAGE=prd
+export SLS_API_GROUP=$apiGroup
+export SLS_API_VERSION=$apiVersion
+export SLS_BASE_PATH=$basePath
+
+export SLS_HOST=\"https://$apiGroup$-$apiVersion.prd.$serviceName.wiwa.io/$basePath\"
+mocha test-scripts/functions/$apiGroup-$apiVersion-$basePath.js
+""" > test-deploy-prd-$apiGroup-$apiVersion-$basePath.sh

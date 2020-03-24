@@ -142,11 +142,11 @@ class $presenterName: NSObject, $presenterProtocolName {
   private var disposeBagForInteractor = DisposeBag()
   private var disposeBagForWireframe = DisposeBag()
 
-  weak var view: $viewProtocolName? { didSet { resetViewBindings } }
-  var interactor: $interactorProtocolName? { didSet { resetInteractorBindings } }
-  var wireframe: $wireframeProtocolName? { didSet { resetWireframeBindings } }
+  weak var view: $viewProtocolName? { didSet { resetViewBindings() } }
+  var interactor: $interactorProtocolName? { didSet { resetInteractorBindings() } }
+  var wireframe: $wireframeProtocolName? { didSet { resetWireframeBindings() } }
   
-  private func resetViewBinding() {
+  private func resetViewBindings() {
     disposeBagForView = DisposeBag()
 
     guard let v = view else { return }

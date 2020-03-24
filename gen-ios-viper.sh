@@ -64,8 +64,6 @@ protocol $presenterProtocolName: class {
   var view: $viewProtocolName? { get set }
   var interactor: $interactorProtocolName? { get set }
   var wireframe: $wireframeProtocolName? { get set }
-  
-  func viewDidLoad()
 }
 
 protocol $interactorProtocolName: class {
@@ -137,13 +135,36 @@ echo """\
 //
 
 import Foundation
+import RxSwift
 
 class $presenterName: NSObject, $presenterProtocolName {
-  weak var view: $viewProtocolName?
-  var interactor: $interactorProtocolName?
-  var wireframe: $wireframeProtocolName?
-    
-  func viewDidLoad() {
+  private var disposeBagForView = DisposeBag()
+  private var disposeBagForInteractor = DisposeBag()
+  private var disposeBagForWireframe = DisposeBag()
+
+  weak var view: $viewProtocolName? { didSet { resetViewBindings } }
+  var interactor: $interactorProtocolName? { didSet { resetInteractorBindings } }
+  var wireframe: $wireframeProtocolName? { didSet { resetWireframeBindings } }
+  
+  private func resetViewBinding() {
+    disposeBagForView = DisposeBag()
+
+    guard let v = view else { return }
+
+    v.onViewDidLoad.subscribe(onNext: { [weak self] in
+      self?.handleViewDidLoad()
+    }).disposed(by: disposeBagForView)
+  }
+
+  private func resetInteractorBindings() {
+    disposeBagForInteractor = DisposeBag()
+  }
+
+  private func resetWireframeBindings() {
+    disposeBagForWireframe = DisposeBag()
+  }
+  
+  private func handleViewDidLoad() {
   }
 }""" > $presenterName.swift;
 
